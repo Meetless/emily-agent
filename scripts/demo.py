@@ -123,13 +123,19 @@ async def main():
     arunner = InMemoryRunner(agent=root_agent, app_name="emily")
     session = await arunner.session_service.create_session(app_name="emily", user_id="operator")
 
-    eng = ctx.persona_user["s012_eng_payments"]
-    pm = ctx.persona_user["s012_pm_launch"]
+    # The kernel routes each ask to the ownership owner (retry -> tl_checkout,
+    # timeout -> qa_checkout), and that owner must be SEATED as a stakeholder on the
+    # case or DriveService.createOutboundMessage throws "stakeholder not found". So,
+    # like golden_spine, we seat the whole team as decision owners; the kernel then
+    # routes to whichever seated owner owns each condition's area.
+    team = [ctx.owner_user_id] + list(ctx.persona_user.values())
+    team_list = ", ".join(team)
 
     objective = (
-        "Get the push-notifications feature ready for the Tuesday release. Two things are still open: "
-        "the notification rate-limit policy and the opt-out data-retention rule. "
-        f"Decision owners: {eng} owns the rate-limit policy; {pm} owns the opt-out retention rule."
+        "Get the Checkout pilot ready for the Monday beta. Two things are still open: "
+        "the payment retry policy and the provider timeout budget. "
+        f"Seat this whole team as the decision owners so the kernel can route each decision to its "
+        f"accountable owner: {team_list}."
     )
 
     reply = ProductReplyDriver(
