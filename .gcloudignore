@@ -1,0 +1,10 @@
+# gcloud uploads the build context per this file (NOT .gitignore). The vendored
+# MCP bundle must be INCLUDED, so do not ignore vendor/.
+.git/
+.venv/
+__pycache__/
+*.pyc
+*.log
+.env
+scripts/
+docs/

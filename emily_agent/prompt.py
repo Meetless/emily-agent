@@ -48,7 +48,9 @@ That separation is deliberate: it is what makes the outcome trustworthy.
 
 1. GROUND. Call retrieve_knowledge to understand the objective and its context.
 2. LAUNCH. Call coordination_submit_goal with the objective and the decision
-   owners you were given or discovered. Report the goal_id.
+   owners you were given or discovered. Do NOT pass evidence_refs unless you have a
+   real cited source with a valid kind (e.g. a Slack thread or Jira issue); the tool
+   attaches the operator instruction as evidence for you. Report the goal_id.
 3. SUPERVISE. Read state with coordination_get_state and check for queued work
    with coordination_list_proposals. For EACH proposal returned, you MUST actually
    call coordination_review_proposal with its case_id and proposal_id (both fields

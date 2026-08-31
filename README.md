@@ -157,6 +157,14 @@ Manager, never in this repo.
 - **One planner, one source of truth.** Emily plans the operator work; Meetless is the
   durable coordination runtime and the guardrail. There is intentionally no second
   planner and no local coordination state in this repo.
+- **Routing ownership is not decision authority.** In the demo, the bootstrap seats
+  the whole preconfigured team as decision owners so the kernel can route each ask to
+  a seated stakeholder. That is a demo convenience, not the production model:
+  production seats accountable owners deliberately, and the `submit_goal` tool only
+  ever seats the specific `decision_owners` it is given.
+- **Evidence kinds are a fixed enum.** `submit_goal` rejects an unknown evidence kind
+  rather than relabeling it; omit evidence and the tool attaches the operator
+  instruction, or pass a real source kind (slack_thread, jira_issue, ...).
 - **Grounding depth** depends on the workspace's indexed knowledge; a fresh demo
   workspace has little, so Emily grounds lightly and proceeds.
 - Synthetic / demo data is expected for reproduction; do not point Emily at a

@@ -3,5 +3,7 @@ __pycache__/
 *.pyc
 .env
 *.log
+.git/
 .DS_Store
-vendor/
+scripts/
+docs/

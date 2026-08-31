@@ -123,11 +123,14 @@ async def main():
     arunner = InMemoryRunner(agent=root_agent, app_name="emily")
     session = await arunner.session_service.create_session(app_name="emily", user_id="operator")
 
-    # The kernel routes each ask to the ownership owner (retry -> tl_checkout,
-    # timeout -> qa_checkout), and that owner must be SEATED as a stakeholder on the
-    # case or DriveService.createOutboundMessage throws "stakeholder not found". So,
-    # like golden_spine, we seat the whole team as decision owners; the kernel then
-    # routes to whichever seated owner owns each condition's area.
+    # DEMO-WORKSPACE BOOTSTRAP ONLY. The kernel routes each ask to the ownership
+    # owner (retry -> tl_checkout, timeout -> qa_checkout), and that owner must be
+    # SEATED as a stakeholder or DriveService.createOutboundMessage throws
+    # "stakeholder not found". For this preconfigured demo we seat the whole team so
+    # whichever routed owner the kernel picks is present. This is NOT the production
+    # authority model: routing ownership and decision authority are different
+    # concepts, and production seats owners deliberately, not en masse. The
+    # submit_goal tool itself seats only the decision_owners it is given.
     team = [ctx.owner_user_id] + list(ctx.persona_user.values())
     team_list = ", ".join(team)
 
@@ -178,7 +181,7 @@ async def main():
         # SUPERVISE LOOP. The kernel decomposes sequentially and asks/replies are
         # async, so we interleave: each pass Emily approves any pending proposals
         # and proposes closure if ready; the harness delivers any human replies.
-        deadline = time.time() + 360
+        deadline = time.time() + 600
         passno = 0
         while time.time() < deadline:
             passno += 1
