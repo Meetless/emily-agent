@@ -39,7 +39,9 @@ assertion set from the monorepo:
    - Show the Cloud Run console page for the service and its Ready revision
      (`emily-agent-00001-kw8`).
 
-2. **The deployed agent invoking a real tool + Gemini 3.5 Flash** (one command):
+2. **The deployed agent invoking a real tool + Gemini 3.5 Flash** (proven,
+   revision `emily-agent-00002-n5v`, pointing at the public backend endpoints
+   `control.meetless.ai` / `intel.meetless.ai`):
 
 ```bash
 SA=pulse-reader@prod-meetless.iam.gserviceaccount.com   # any account with run.invoker
@@ -52,9 +54,17 @@ curl -s -X POST -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/
   "new_message":{"role":"user","parts":[{"text":"Call meetless__retrieve_knowledge for \"what is Meetless\" and report."}]}}'
 ```
 
+   The tool now returns a clean HTTP 200 governed-memory result (no 404): the
+   production governed-memory service answers `corpus_empty` because the prod corpus
+   is not populated (dogfooding happens locally), which is a valid governed answer,
+   not an error, and exposes no sensitive content. On camera, narrate Emily's
+   summary rather than the raw JSON (the JSON echoes the opaque workspace id).
+
    Then show the Cloud Run logs: they contain
    `Sending out request, model: gemini-3.5-flash, backend: GoogleLLMVariant.GEMINI_API`
    and the MCP tool session, proving Gemini 3.5 Flash + ADK executed on Google Cloud.
+   The rich, non-empty knowledge and the full coordination are shown in the LOCAL run
+   (section A), which uses a populated throwaway workspace.
 
 3. **The Meetless coordination backend on Cloud Run** (the backend Emily drives):
    `meetless-control`, `meetless-intel`, `meetless-worker` in `prod-meetless`,
