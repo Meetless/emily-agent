@@ -64,26 +64,12 @@ def _mcp_env() -> dict[str, str]:
 
 def _build_toolset() -> McpToolset:
     command = os.environ.get("MEETLESS_MCP_COMMAND", "node")
-    # Default to the local monorepo build (sibling checkout:
-    # <projects>/meetless/meetless-cli/.../dist/server.js). Override with
-    # MEETLESS_MCP_SERVER for a bundled copy or `npx @meetless/mcp` in a container.
-    # emily-agent lives at <projects>/meetless/emily-agent, so the sibling
-    # monorepo is one level up under `meetless/`.
-    projects_meetless = os.path.dirname(
-        os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    )
-    default_server = os.environ.get(
-        "MEETLESS_MCP_SERVER",
-        os.path.join(
-            projects_meetless,
-            "meetless",
-            "meetless-cli",
-            "packages",
-            "mcp",
-            "dist",
-            "server.js",
-        ),
-    )
+    # Default to the vendored self-contained bundle committed in this repo, so a
+    # clean clone runs with no monorepo and no npm install. Override with
+    # MEETLESS_MCP_SERVER to point at your own Meetless MCP build.
+    repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    vendored = os.path.join(repo_root, "vendor", "meetless-mcp.mjs")
+    default_server = os.environ.get("MEETLESS_MCP_SERVER", vendored)
     args_env = os.environ.get("MEETLESS_MCP_ARGS")
     args = args_env.split() if args_env else [default_server]
     return McpToolset(
