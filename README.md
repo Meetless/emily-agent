@@ -170,6 +170,21 @@ Manager, never in this repo.
 - Synthetic / demo data is expected for reproduction; do not point Emily at a
   workspace whose data you would not want an operator to act on.
 
+## Created during the hackathon vs pre-existing (disclosure)
+
+Newly created during the submission period (this repository):
+- The Emily ADK agent (`emily_agent/`): the operator prompt, the Gemini/ADK wiring,
+  the MCP tool allowlist, and the driver loop.
+- The demo/e2e harness (`run_local.py`, `scripts/demo.py`) and deploy tooling.
+- The five coordination DRIVER tools in the vendored Meetless MCP server (they wrap
+  pre-existing Meetless control endpoints; no new backend behavior or schema).
+
+Pre-existing Meetless work (disclosed integrated dependency, owned by the submitting
+team): the Meetless coordination platform itself, the `control`/`worker`/`intel`
+services and their coordination kernel, and the rest of the MCP server's read/evidence
+tools. The bundled MCP server in `vendor/` is built from the private Meetless
+monorepo; see [vendor/README.md](vendor/README.md) for provenance and rebuild steps.
+
 ## License
 
 Apache-2.0. Integrates with Meetless (pre-existing, owned by the submitting team),

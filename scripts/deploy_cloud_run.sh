@@ -20,11 +20,13 @@ SERVICE="${SERVICE:-emily-agent}"
 BACKEND_URL="${MEETLESS_BACKEND_URL:-https://meetless-control-653554733822.us-central1.run.app}"
 INTEL_URL="${MEETLESS_INTEL_URL:-https://meetless-intel-653554733822.us-central1.run.app}"
 
+# AUTHENTICATED by default: the service holds MEETLESS_CONTROL_TOKEN, so it must not
+# be exposed unauthenticated. Invoke it with an identity token (see README).
 gcloud run deploy "$SERVICE" \
   --source . \
   --project "$PROJECT" \
   --region "$REGION" \
-  --allow-unauthenticated \
+  --no-allow-unauthenticated \
   --set-env-vars "EMILY_MODEL=gemini-3.5-flash,GOOGLE_GENAI_USE_VERTEXAI=FALSE,MEETLESS_BACKEND_URL=${BACKEND_URL},MEETLESS_INTEL_URL=${INTEL_URL},MEETLESS_MCP_COMMAND=node,MEETLESS_MCP_SERVER=/app/vendor/meetless-mcp.mjs" \
   --set-secrets "GOOGLE_API_KEY=GOOGLE_API_KEY:latest,MEETLESS_CONTROL_TOKEN=MEETLESS_CONTROL_TOKEN:latest,MEETLESS_WORKSPACE_ID=MEETLESS_WORKSPACE_ID:latest"
 
