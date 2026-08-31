@@ -20,32 +20,29 @@ then coordination_submit_goal. Point out the goal id. Voiceover: "Gemini interpr
 the objective and launches a governed coordination Goal. It does not plan the whole
 thing itself; it hands the durable work to the kernel."
 
-## 1:05 to 1:45 — The kernel decomposes; Emily supervises
-Show coordination_get_state returning the two Conditions, and Emily calling
-coordination_review_proposal to approve the kernel's outreach. Voiceover: "The
-kernel decomposed the goal into the conditions that must be true and proposed who to
-ask. Emily approves the on-objective outreach. This is a real approval call, not a
-narration."
+## 1:05 to 1:35 — The kernel decomposes and routes to two different owners
+The renderer shows the Goal decomposed into two blocking conditions, each routed to a
+DIFFERENT accountable owner (Payment retry policy → Maya, Payments Engineering; QA
+sign-off → Chris, QA Lead), then "Asks sent. PARKED." Voiceover: "Emily handed the
+durable work to the coordination kernel. It broke the outcome into what must be true,
+and routed each decision to the person who actually owns it. Two different humans. Now
+it parks — no compute while it waits."
 
-## 1:45 to 2:20 — The accountable human answers; the case resumes
-Show the owner's authoritative reply going in (Slack in the real product; the demo
-harness simulates it), then coordination_get_state showing a Condition flip to
-SATISFIED. Voiceover: "Emily waited on the accountable owner rather than inventing
-the decision. Their answer is captured as authoritative evidence, and the durable
-case resumes on its own."
+## 1:35 to 2:20 — Two asynchronous replies; the kernel resumes itself
+The two humans reply (Slack in production; simulated here). Each reply is a real
+CASE_AGENT_WAKE that resumes the kernel on its own, and each condition flips to
+SATISFIED. Emphasize: NO operator is telling Emily to check again between replies.
+Voiceover: "Maya answers the retry policy. That event wakes the workflow and the
+condition verifies. Still waiting on QA. Chris signs off. That event wakes it again.
+Both conditions are now satisfied — and at no point did anyone prompt Emily to
+continue."
 
-## 2:20 to 2:45 — The can't-lie beat (signature)
-Intentional red-team probe: while one Condition is still open, have Emily call
-coordination_propose_close. Show the server returning status "not_ready" with
-blockedBy. Voiceover: "Watch what happens when we ask Emily to close early. The
-server refuses. Emily cannot declare a goal done. Only the server can, and only when
-the evidence supports it." (Frame this explicitly as a deliberate safety probe.)
-
-## 2:45 to 3:10 — Finish the work; server closes
-The second owner answers, the last Condition verifies, Emily proposes closure again,
-and now the server returns "closed". Show the goal status CLOSED and the HUD / audit
-trail. Voiceover: "Every decision has an accountable owner and a verification. The
-whole chain is auditable."
+## 2:20 to 2:45 — The kernel closes it (LLM proposes, kernel owns truth)
+Show "All conditions satisfied. The kernel proposed closure and CLOSED the goal," then
+the closing line: 1 objective · 2 asynchronous human decisions · 0 operator follow-ups
+· CLOSED. Voiceover: "Emily proposed completion; the coordination kernel decided it.
+Gemini reasons about what should happen. The kernel owns durable truth — closing a goal
+is a server-side transition guarded by its conditions. Emily cannot hallucinate done."
 
 ## 3:10 to 3:30 — Architecture + Google Cloud proof
 Show the README architecture diagram (Gemini + ADK + MCP + Meetless kernel), then

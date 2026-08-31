@@ -5,7 +5,7 @@ runs on Google Cloud. The cleanest, safest split is: run the full coordination
 LOCALLY (it provisions a throwaway workspace and never touches production data), and
 show the deployed Cloud Run service + logs for the Google Cloud proof.
 
-## A. The full coordination (local, ~4 min, safe)
+## A. The autonomous coordination run (local, ~2 min, camera-ready)
 
 Prereq: the Meetless stack running locally (control :3006, worker, intel :8100), a
 monorepo checkout, and this repo's venv.
@@ -14,22 +14,32 @@ monorepo checkout, and this repo's venv.
 cd emily-agent
 source .venv/bin/activate
 export GOOGLE_API_KEY=<gemini key>       # or use Vertex
-export EMILY_KEEP=1                        # keep the workspace so you can show the HUD
-python scripts/demo.py
+./scripts/record_take.sh                  # produces one clean flat take, kept for recording
 ```
 
-You will see, live: Gemini grounds and submits the Goal, the kernel decomposes it
-into two Conditions, Emily approves both proposals (real `coordination_review_proposal`
-calls), the owner answers, the Conditions verify to SATISFIED, and the server closes
-the Goal. For the "cannot fake done" beat, before all conditions are satisfied Emily
-calls `coordination_propose_close` and the server returns `not_ready` with `blockedBy`.
+`record_take.sh` runs `scripts/demo_autonomous.py` and re-runs until it yields one clean
+take (the shared reasoner occasionally spawns a recursive sub-condition, which it detects
+in seconds and skips). What you record, verbatim from the real case, is:
 
-To narrate on camera, `python run_local.py "<objective>"` streams the tool calls one at
-a time, or use `adk web` for the visual tool-call panel.
+- ONE operator instruction (an outcome, not a workflow).
+- Emily (Gemini via ADK) grounds and submits a governed Goal.
+- The kernel decomposes it into two blocking conditions and routes each to its own
+  accountable owner (Maya · Payments Engineering; Chris · QA Lead).
+- Asks sent, goal PARKED (no compute while waiting).
+- Two humans reply asynchronously; each reply is a real CASE_AGENT_WAKE that resumes the
+  kernel on its own. NO operator follow-ups.
+- Each condition verifies to SATISFIED server-side; when both are, the kernel proposes
+  closure and CLOSES the goal.
+- Closing line: 1 objective · 2 asynchronous human decisions · 0 operator follow-ups · CLOSED.
 
-Structural proof to show after (optional): the goal id is printed; run the frozen
+There is deliberately no manufactured "denied close": the kernel proposes closure only
+when both conditions are satisfied. The architectural point to narrate is that the LLM
+proposes and the kernel owns durable truth and closure.
+
+Structural proof to show after (optional): the goal id is in the workspace; run the frozen
 assertion set from the monorepo:
 `DATABASE_URL=... node tools/scenarios/emily/golden-d1-trace.cjs <goalId>`.
+(`scripts/demo.py` and `run_local.py` remain as an alternate / narrate-each-step view.)
 
 ## B. Google Cloud proof (record these)
 
